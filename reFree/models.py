@@ -1,8 +1,9 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
+from phonenumber_field.modelfields import PhoneNumberField
 
 # make changes-->emailvalidation,imageField,relations
 
@@ -19,8 +20,7 @@ def user_directory_path(instance, filename):
 class User(models.Model): 
     firstname =models.CharField(max_length= 50)
     lastname =models.CharField(max_length= 50)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+    phone_number=PhoneNumberField()
     #def custom_validate_email(value):
     #    if <custom_check>:
     #        raise ValidationError('Email format is incorrect')
@@ -72,3 +72,4 @@ class FinalDesign(models.Model):
 	#upload = models.ImageField(upload_to = user_directory_path2)
     class Meta :
         verbose_name_plural="FinalDesign"
+    
