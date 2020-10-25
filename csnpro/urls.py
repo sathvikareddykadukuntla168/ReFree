@@ -42,8 +42,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     url(r'^home/$', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('signup/',views.signup_view.as_view(),name='signup'),
-    path('login/', views.login_view.as_view(), name='login'),
+   # path('signup/',views.signup_view.as_view(),name='signup'),
     path('profile/', views.home, name='home'),
     path('logout/', views.logout_view, name='logout'),
 ] 

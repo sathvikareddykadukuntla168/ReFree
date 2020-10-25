@@ -1,12 +1,18 @@
 from django.shortcuts import render,redirect,reverse
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
+from rest_framework.decorators import action , api_view , renderer_classes,permission_classes
 from reFree.models import User,Company,Projects,Component,FinalDesign,SocialLinks
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import viewsets,permissions,status
+from rest_framework.renderers import JSONRenderer , TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from reFree.serializers import UserSerializer,CompanySerializer,SocialLinksSerializer,ProjectsSerializer,ComponentSerializer,FinalDesignSerializer
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.views import View
+from reFree.forms import Signupform
+from rest_framework.permissions import AllowAny
+#from django_project import helpers
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -15,7 +21,55 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()#.order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny]
+
+    @action(detail=False,methods=['post', 'options', ])
+    def signupview(self, request):
+        print(request)
+        print(self.request)
+        authorization_code = self.request.query_params.get('username')
+        print(authorization_code)
+        var = request.data
+        print(var)
+        
+        form = Signupform(request.POST)
+        return Response({'data': 'User Created'})
+        print(form.is_valid())
+        
+        if form.is_valid():
+            user = form.save()
+            return Response({'data': 'User Created'})
+
+        return Response({'data': 'Invalid Username or Password'})
+
+    @action(detail=False,methods=['get','post', 'options', ])
+    def loginview(self, request):
+        print(request)
+        print(self.request)
+        authorization_code = self.request.query_params.get('username')
+        print(authorization_code)
+        var = request.data
+        print(var)
+         
+        form = AuthenticationForm(request, data=request.data)
+        print(form.is_valid())
+        if form.is_valid():
+            user = authenticate(
+                request,
+                username=form.cleaned_data.get('username'),
+                password=form.cleaned_data.get('password') 
+            ) 
+            print(user.username)
+            if user is None:
+                return Response({'data': 'Invalid Username or Password'})
+              
+            print(user.username)
+            login(request, user)
+            print(user.username)
+            return Response({'data': 'User exists', 'username':self.request.user.username})
+         # invalid username/ password # user does not exist in db
+        return Response({'data': 'Invalid Username or Password'})  
+
 
 class CompanyViewSet(viewsets.ModelViewSet):
    
@@ -63,7 +117,7 @@ def home(request):
         'socialLinks':socialLinks
     }
     return render(request,'home.html',context)
-class signup_view(View):
+"""class signup_view(View):
     def get(self, request):
         return render(request, 'signup.html', { 'form': UserCreationForm() })
 
@@ -73,41 +127,49 @@ class signup_view(View):
             user = form.save()
             return redirect(reverse('login'))
 
-        return render(request, 'signup.html', { 'form': form })
+        return render(request, 'signup.html', { 'form': form })"""
 
 
-class login_view(View):
+"""class loginview(View):
+    permission_classes = [AllowAny]
     def get(self, request):
-        return render(request, 'login.html', { 'form':  AuthenticationForm })
+        return render(request, 'loginview.html', { 'form':  AuthenticationForm() })
 
+    #@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
     def post(self, request):
+        print(request)
+        print(self.request)
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = authenticate(
                 request,
                 username=form.cleaned_data.get('username'),
-                password=form.cleaned_data.get('password')
-            )
+                password=form.cleaned_data.get('password') """
+     #       ) 
+        #    print(user.username)
+  #          if user is None:
+  #              print(user.username)
+  #              return Response({'data': 'User does not exist'})
+              
 
-            if user is None:
-               """ return render(
-                    request,
-                    'login.html',
-                    { 'form': form, 'invalid_creds': True }
-                )"""
-            return redirect(reverse('home'))
+        #    print(user.username)
+ #           login(request, user)
+ #           print(user.username)
+ #           return Response({'data': 'User exists', 'username':self.request.user.username}) 
+            
+            #return HttpResponseRedirect(reverse('home.html',kwargs={'username' : user.username}))
+            #return render({'form': form},status=status.HTTP_202_ACCEPTED)
 
-            try:
-                form.confirm_login_allowed(user)
-            except ValidationError:
-                return render(
-                    request,
-                    'login.html',
-                    { 'form': form, 'invalid_creds': True }
-                )
-            login(request, user)
-        return HttpResponse("<html>I am invalid user</html>")
+            
+            #return HttpResponse("<html>I am invalid user</html>")
+       # return HttpResponse("<html>I am invalid user</html>")
+        #return HttpResponse({'data':'User doesnot exists'},status = status.HTTP_401_UNAUTHORISED)
+       # return Response({'form': form,'invalid_creds': True})
 
-        
+@action(detail=False,methods=['get',])
 def logout_view(request):
-        return render(request,'login.html')
+    logout(request)
+    return HttpResponse({'user': 'You have logged out'})
+
+'''def logout_view(request):
+        return render(request,'login.html')'''

@@ -25,7 +25,7 @@ SECRET_KEY = 'n6m6h-zwdqszl)=#+me#5n1_+hf#h-og53n59t!e0i($d1)3jo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'reFree',
     'ckeditor',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -74,6 +76,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'csnpro.wsgi.application'
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+CSRF_COOKIE_NAME = 'frontend_csrftoken'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -81,9 +86,9 @@ WSGI_APPLICATION = 'csnpro.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbrefree',
-        'USER': 'root',
-        'PASSWORD': '',
+        'NAME': 'sandydb',
+        'USER': 'refree',
+        'PASSWORD': 'refree',
         'HOST':'localhost',
         'PORT':''
     }
@@ -109,6 +114,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
+#AUTH_USER_MODEL = 'reFree.User'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -127,8 +136,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL='/login/'
+'''LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL='/login/'''
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = (
+
+        'http://localhost:3000',
+        'http://localhost:8000',
+)
 
 #PAGINATION
 REST_FRAMEWORK = {
