@@ -36,7 +36,6 @@ router.register(r'projects', views.ProjectsViewSet)
 router.register(r'component', views.ComponentViewSet)
 router.register(r'finalDesign', views.FinalDesignViewSet)
 
-
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -44,5 +43,5 @@ urlpatterns = [
     url(r'^home/$', TemplateView.as_view(template_name='home.html'), name='home'),
    # path('signup/',views.signup_view.as_view(),name='signup'),
     path('profile/', views.home, name='home'),
-    path('logout/', views.logout_view, name='logout'),
+    #path('logout/', views.logout_view, name='logout'),
 ] 

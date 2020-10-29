@@ -13,7 +13,6 @@ from django.views import View
 from rest_framework.permissions import AllowAny
 #from django_project import helpers
 
-
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -31,10 +30,8 @@ class UserViewSet(viewsets.ModelViewSet):
         userdata = request.data
         print(userdata)
 
-        #user = User.objects.get(username = userdata.username, email = userdata.email)
         u1 = User.objects.filter(username = userdata['username'])
         u2 = User.objects.filter(email = userdata['email'])
-        #newuser = User(username=userdata['username'])
 
         if len(u1)!=0:
             return Response({'data': 'Username already taken!'})
@@ -45,55 +42,37 @@ class UserViewSet(viewsets.ModelViewSet):
             first_name = userdata['firstname'], 
             last_name = userdata['lastname'], 
             email = userdata['email'],
-            password = userdata['password']
+            password = userdata['password'],
+            phone_number = userdata['phone_number']
             )
-
         newuser.save()
         return Response({'data': 'User Created'})
-        
-        """if request.method == "POST":
-                        
-                                    form = Signupform(request.POST)
-                                    return Response({'data': 'User Created'})
-                                    print(form.is_valid())
-                                
-                                    if form.is_valid():
-                                        form.save()
-                                        return Response({'data': 'User Created'})
-                        
-                                else:
-                                    form = Signupform()
-                        
-                                return Response({'data': 'Invalid Username or Password'})"""
-
+       
     @action(detail=False,methods=['get','post', 'options', ])
     def loginview(self, request):
         print(request)
         print(self.request)
         authorization_code = self.request.query_params.get('username')
         print(authorization_code)
-        var = request.data
-        print(var)
-         
-        form = AuthenticationForm(request, data=request.data)
-        print(form.is_valid())
-        if form.is_valid():
-            user = authenticate(
-                request,
-                username=form.cleaned_data.get('username'),
-                password=form.cleaned_data.get('password') 
-            ) 
-            print(user.username)
-            if user is None:
-                return Response({'data': 'Invalid Username or Password'})
-              
-            print(user.username)
-            login(request, user)
-            print(user.username)
-            return Response({'data': 'User exists', 'username':self.request.user.username})
-         # invalid username/ password # user does not exist in db
-        return Response({'data': 'Invalid Username or Password'})  
-
+        userdata = request.data
+        print(userdata)       
+        u1 = User.objects.filter(username = userdata['username'])       
+        if len(u1)==0:
+            return Response({'data': 'Invalid Username'})
+        try : 
+            u2 = User.objects.get(username=userdata['username'],password = userdata['password'])
+            if u2 is not None :
+                login(request, u2)
+                return Response({'data':'User logged in','username':u2.username})
+            else :
+                return Response({'data': 'Invalid password'})
+        except User.DoesNotExist : 
+            return Response({'data':'Invalid password'})
+    
+    @action(detail=False,methods=['get',])
+    def logoutview(request):
+        logout(request)
+        return Response({'data': 'User has logged out'})
 
 class CompanyViewSet(viewsets.ModelViewSet):
    
@@ -141,59 +120,8 @@ def home(request):
         'socialLinks':socialLinks
     }
     return render(request,'home.html',context)
-"""class signup_view(View):
-    def get(self, request):
-        return render(request, 'signup.html', { 'form': UserCreationForm() })
-
-    def post(self, request):
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            return redirect(reverse('login'))
-
-        return render(request, 'signup.html', { 'form': form })"""
 
 
-"""class loginview(View):
-    permission_classes = [AllowAny]
-    def get(self, request):
-        return render(request, 'loginview.html', { 'form':  AuthenticationForm() })
-
-    #@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
-    def post(self, request):
-        print(request)
-        print(self.request)
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = authenticate(
-                request,
-                username=form.cleaned_data.get('username'),
-                password=form.cleaned_data.get('password') """
-     #       ) 
-        #    print(user.username)
-  #          if user is None:
-  #              print(user.username)
-  #              return Response({'data': 'User does not exist'})
-              
-
-        #    print(user.username)
- #           login(request, user)
- #           print(user.username)
- #           return Response({'data': 'User exists', 'username':self.request.user.username}) 
-            
-            #return HttpResponseRedirect(reverse('home.html',kwargs={'username' : user.username}))
-            #return render({'form': form},status=status.HTTP_202_ACCEPTED)
-
-            
-            #return HttpResponse("<html>I am invalid user</html>")
-       # return HttpResponse("<html>I am invalid user</html>")
-        #return HttpResponse({'data':'User doesnot exists'},status = status.HTTP_401_UNAUTHORISED)
-       # return Response({'form': form,'invalid_creds': True})
-
-@action(detail=False,methods=['get',])
-def logout_view(request):
-    logout(request)
-    return HttpResponse({'user': 'You have logged out'})
 
 '''def logout_view(request):
         return render(request,'login.html')'''

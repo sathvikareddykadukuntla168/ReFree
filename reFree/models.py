@@ -22,7 +22,7 @@ def user_directory_path(instance, filename):
     firstname =models.CharField(max_length= 50)
     lastname =models.CharField(max_length= 50)
     email = forms.EmailField(max_length=254)
-    phone_number=PhoneNumberField()
+    phonenumber=PhoneNumberField()
     password =forms.CharField(max_length= 50)
     confirmpassword =forms.CharField(max_length= 50)"""
 
@@ -31,7 +31,7 @@ class User(AbstractUser):
     workExperience = models.CharField(max_length=1, choices=WORKEXP, default='1')
     phone_number=PhoneNumberField(default='DEFAULT VALUE')
     def __str__(self):
-        return self.first_name
+        return self.username
     class Meta :
         verbose_name_plural="User"
 
