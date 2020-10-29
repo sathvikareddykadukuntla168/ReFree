@@ -10,7 +10,6 @@ from reFree.serializers import UserSerializer,CompanySerializer,SocialLinksSeria
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth import authenticate, login,logout
 from django.views import View
-from reFree.forms import Signupform
 from rest_framework.permissions import AllowAny
 #from django_project import helpers
 
@@ -29,18 +28,43 @@ class UserViewSet(viewsets.ModelViewSet):
         print(self.request)
         authorization_code = self.request.query_params.get('username')
         print(authorization_code)
-        var = request.data
-        print(var)
-        
-        form = Signupform(request.POST)
-        return Response({'data': 'User Created'})
-        print(form.is_valid())
-        
-        if form.is_valid():
-            user = form.save()
-            return Response({'data': 'User Created'})
+        userdata = request.data
+        print(userdata)
 
-        return Response({'data': 'Invalid Username or Password'})
+        #user = User.objects.get(username = userdata.username, email = userdata.email)
+        u1 = User.objects.filter(username = userdata['username'])
+        u2 = User.objects.filter(email = userdata['email'])
+        #newuser = User(username=userdata['username'])
+
+        if len(u1)!=0:
+            return Response({'data': 'Username already taken!'})
+        if len(u2)!=0:
+            return Response({'data': 'Email already taken!'})
+
+        newuser = User(username = userdata['username'], 
+            first_name = userdata['firstname'], 
+            last_name = userdata['lastname'], 
+            email = userdata['email'],
+            password = userdata['password']
+            )
+
+        newuser.save()
+        return Response({'data': 'User Created'})
+        
+        """if request.method == "POST":
+                        
+                                    form = Signupform(request.POST)
+                                    return Response({'data': 'User Created'})
+                                    print(form.is_valid())
+                                
+                                    if form.is_valid():
+                                        form.save()
+                                        return Response({'data': 'User Created'})
+                        
+                                else:
+                                    form = Signupform()
+                        
+                                return Response({'data': 'Invalid Username or Password'})"""
 
     @action(detail=False,methods=['get','post', 'options', ])
     def loginview(self, request):

@@ -115,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 
-#AUTH_USER_MODEL = 'reFree.User'
+AUTH_USER_MODEL = 'reFree.User'
 
 
 # Internationalization

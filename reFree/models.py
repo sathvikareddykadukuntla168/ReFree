@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from ckeditor.fields import RichTextField
@@ -14,23 +14,24 @@ WORKEXP=(
     ('3','>5years'),
 )
 def user_directory_path(instance, filename): 
-	# file will be uploaded to MEDIA_ROOT / user_<id>/<filename> 
-	return 'user_{0}/{1}'.format(instance.user.id, filename)
+    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename> 
+    return 'user_{0}/{1}'.format(instance.user.phone_number, filename)
 
-class User(models.Model): 
+"""class UserProfile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique=True) 
     firstname =models.CharField(max_length= 50)
     lastname =models.CharField(max_length= 50)
+    email = forms.EmailField(max_length=254)
     phone_number=PhoneNumberField()
-    #def custom_validate_email(value):
-    #    if <custom_check>:
-    #        raise ValidationError('Email format is incorrect')
-    # email = models.EmailField(max_length=254, blank=False, unique=True, validators=[validate_email, custom_validate_email)
-    about = RichTextField(blank=True,null=True) 
-    workExperience = models.CharField(max_length=1, choices=WORKEXP)
+    password =forms.CharField(max_length= 50)
+    confirmpassword =forms.CharField(max_length= 50)"""
+
+class User(AbstractUser): 
+    about = RichTextField(blank=True,null=True, ) 
+    workExperience = models.CharField(max_length=1, choices=WORKEXP, default='1')
+    phone_number=PhoneNumberField(default='DEFAULT VALUE')
     def __str__(self):
-        return self.firstname
-    #emailsToSend = models.ForeignKey('self',on_delete=models.CASCADE, null=True, blank=True)
-    # follows = models.ForeignKey('self',on_delete=models.CASCADE, null=True, blank=True)
+        return self.first_name
     class Meta :
         verbose_name_plural="User"
 

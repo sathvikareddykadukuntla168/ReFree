@@ -15,12 +15,13 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
 class SocialLinksSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SocialLinks
-        fields = ['user', 'name','link']
+        #fields = ['user', 'name','link']
+        fields = []
 
 class ProjectsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Projects
-        fields = ['user', 'name','description','likes']
+        fields = ['user', 'name','description', 'Likes']
 
 class ComponentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
