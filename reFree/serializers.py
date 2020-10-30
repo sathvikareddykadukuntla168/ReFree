@@ -2,34 +2,34 @@ from reFree.models import User,Company,Projects,Component,FinalDesign,SocialLink
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['firstname', 'lastname', 'phone_number','about','workExperience']
+        fields = '__all__'
 
-class CompanySerializer(serializers.HyperlinkedModelSerializer):
+class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
-        fields = ['user', 'time','company','position']
+        fields = '__all__'
 
-class SocialLinksSerializer(serializers.HyperlinkedModelSerializer):
+class SocialLinksSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialLinks
         #fields = ['user', 'name','link']
-        fields = []
+        fields = '__all__'
 
-class ProjectsSerializer(serializers.HyperlinkedModelSerializer):
+class ProjectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
-        fields = ['user', 'name','description', 'Likes']
+        fields = '__all__'
 
-class ComponentSerializer(serializers.HyperlinkedModelSerializer):
+class ComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Component
-        fields = ['project','description','upload']
+        fields = '__all__'
 
-class FinalDesignSerializer(serializers.HyperlinkedModelSerializer):
+class FinalDesignSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinalDesign
-        fields = ['project']
+        fields = '__all__'
 
