@@ -74,6 +74,12 @@ class UserViewSet(viewsets.ModelViewSet):
         logout(request)
         return Response({'data': 'User has logged out'})
 
+    @action(detail=False , methods=['get',])
+    def currentuser(self , request ):
+        if self.request.user.is_anonymous:
+            return Response({'userId':0})
+        return Response({'userId':self.request.user.id})
+
 class CompanyViewSet(viewsets.ModelViewSet):
    
     queryset = Company.objects.all()
@@ -120,8 +126,3 @@ def home(request):
         'socialLinks':socialLinks
     }
     return render(request,'home.html',context)
-
-
-
-'''def logout_view(request):
-        return render(request,'login.html')'''
