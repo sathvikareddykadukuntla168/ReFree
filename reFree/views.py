@@ -82,6 +82,18 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'userId':0})
         return Response({'userId':self.request.user.id})
 
+    @action(detail=False , methods=['get',])
+    def userlist(self , request ):
+        if self.request.user.is_anonymous:
+            return Response({'UserList':0})
+        
+        querysets = User.objects.all()
+        users = querysets.order_by('username')[:]
+        ordered = sorted(users, key=operator.attrgetter('first_name'))
+        serializer = UserSerializer(ordered,many =True)
+        print(serializer.data)
+        return Response(serializer.data)
+
 class CompanyViewSet(viewsets.ModelViewSet):
    
     queryset = Company.objects.all()
