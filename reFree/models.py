@@ -30,6 +30,9 @@ class User(AbstractUser):
     about = RichTextField(blank=True,null=True, ) 
     workExperience = models.CharField(max_length=1, choices=WORKEXP, default='1')
     phone_number=PhoneNumberField(default='DEFAULT VALUE')
+    profile_photo = models.ImageField(upload_to='profile_photos/',null=True,blank =True)
+    #emailsToSend = models.ForeignKey(User,on_delete=models.CASCADE);
+    #follows = models.ForeignKey(User,on_delete=models.CASCADE);
     def __str__(self):
         return self.username
     class Meta :
@@ -61,16 +64,12 @@ class Projects(models.Model):
 class Component(models.Model):
     project =models.ForeignKey(Projects,on_delete=models.CASCADE)
     description = RichTextField(blank=True,null=True)
-    upload = models.ImageField(upload_to = user_directory_path) 
+    upload = models.ImageField(upload_to ='components/',null=True,blank =True) 
     class Meta :
         verbose_name_plural="Component"
 
 class FinalDesign(models.Model):
-    project = models.ForeignKey(Projects,on_delete=models.CASCADE) 
-    #def user_directory_path2(instance, filename): 
-	    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename> 
-	    #return 'user_{0}/{1}'.format(instance.user.id, filename)
-	#upload = models.ImageField(upload_to = user_directory_path2)
+    project = models.ForeignKey(Projects,on_delete=models.CASCADE)     
+    finaldesign = models.ImageField(upload_to ='images/',null=True , blank=True)
     class Meta :
         verbose_name_plural="FinalDesign"
-    

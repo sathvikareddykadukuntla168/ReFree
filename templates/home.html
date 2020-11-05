@@ -10,6 +10,8 @@
 </head>
 <body>
     <p>This is home page of the user</p>
-    <a class="button is-light" href="{% url 'logout' %}">logout</a>
+ <ul>   {% for post in object_list%}
+    <li>{{post.name}}</li>
+    {%endfor%}</ul>
 </body>
 </html>

@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from rest_framework.decorators import action , api_view , renderer_classes,permission_classes
 from reFree.models import User,Company,Projects,Component,FinalDesign,SocialLinks
+from django.views.generic import ListView,DetailView
 from rest_framework import viewsets,permissions,status
 from rest_framework.renderers import JSONRenderer , TemplateHTMLRenderer
 from rest_framework.response import Response
@@ -11,6 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth import authenticate, login,logout
 from django.views import View
 from rest_framework.permissions import AllowAny
+import operator
 #from django_project import helpers
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -98,6 +100,18 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectsSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False , methods=['get',])
+    def projectlist(self , request ):
+        if self.request.user.is_anonymous:
+            return Response({'ProjectList':0})
+        
+        querysets = Projects.objects.filter(user = self.request.user.id)
+        projs = querysets.order_by('likes')[:8]
+        ordered = sorted(projs, key=operator.attrgetter('name'))
+        serializer = ProjectsSerializer(ordered,many =True)
+        print(serializer.data)
+        return Response(serializer.data)
+
 class ComponentViewSet(viewsets.ModelViewSet):
    
     queryset = Component.objects.all()#.order_by('-date_joined')
@@ -109,8 +123,14 @@ class FinalDesignViewSet(viewsets.ModelViewSet):
     queryset = FinalDesign.objects.all()
     serializer_class = FinalDesignSerializer
     permission_classes = [permissions.IsAuthenticated]
+    def display_projects(request): 
+  
+        if request.method == 'GET': 
+            # getting all the projects. 
+            projects = FinalDesign.objects.all()  
+            return Response(serializer.data) 
 
-def home(request):
+'''def home(request):
     user=User.objects.all()[:]
     company=Company.objects.all()[:]
     projects=Projects.objects.all()[:]
@@ -125,4 +145,8 @@ def home(request):
         'finalDesign':finalDesign,
         'socialLinks':socialLinks
     }
-    return render(request,'home.html',context)
+    return render(request,'home.html',context)'''
+
+class HomeView(ListView): 
+    model = Projects
+    template_name = 'home.html'
