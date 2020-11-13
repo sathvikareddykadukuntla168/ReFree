@@ -99,6 +99,12 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectsSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False , methods=['get',])
+    def userprojects(self , request):
+        querysets = Projects.objects.filter(user=self.request.user.id)
+        serializeddata = ProjectsSerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
 class ComponentViewSet(viewsets.ModelViewSet):
    
     queryset = Component.objects.all()#.order_by('-date_joined')
