@@ -90,7 +90,7 @@ DATABASES = {
         'USER': 'guest',
         'PASSWORD': 'Guest123#',
         'HOST':'localhost',
-        'PORT':''
+        'POR':''
     }
 }
 

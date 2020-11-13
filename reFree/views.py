@@ -38,7 +38,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if len(u2)!=0:
             return Response({'data': 'Email already taken!'})
 
-        newuser = User(username = userdata['username'], 
+        newuser = User.objects.create_user(username = userdata['username'], 
             first_name = userdata['firstname'], 
             last_name = userdata['lastname'], 
             email = userdata['email'],
@@ -46,6 +46,7 @@ class UserViewSet(viewsets.ModelViewSet):
             phone_number = userdata['phone_number']
             )
         newuser.save()
+        login(request , newuser)
         return Response({'data': 'User Created'})
        
     @action(detail=False,methods=['get','post', 'options', ])
@@ -60,7 +61,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if len(u1)==0:
             return Response({'data': 'Invalid Username'})
         try : 
-            u2 = User.objects.get(username=userdata['username'],password = userdata['password'])
+            #u2 = User.objects.get(username=userdata['username'],password = userdata['password'])
+            u2 = authenticate(request , username=userdata['username'] , password=userdata['password'])
             if u2 is not None :
                 login(request, u2)
                 return Response({'data':'User logged in','username':u2.username})
@@ -68,7 +70,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'data': 'Invalid password'})
         except User.DoesNotExist : 
             return Response({'data':'Invalid password'})
-    
+    @action(detail=False , methods=['get',])
+    def currentuser(self , request ):
+        if self.request.user.is_anonymous:
+            return Response({'userId':0})
+        return Response({'userId':self.request.user.id })
+
     @action(detail=False,methods=['get',])
     def logoutview(request):
         logout(request)
