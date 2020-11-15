@@ -33,6 +33,7 @@ from reFree.views import HomeView
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'follow', views.FollowViewSet)
 router.register(r'companies', views.CompanyViewSet)
 router.register(r'socialLinks', views.SocialLinksViewSet)
 router.register(r'projects', views.ProjectsViewSet)

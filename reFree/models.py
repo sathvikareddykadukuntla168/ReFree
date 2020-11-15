@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User, AbstractUser
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -31,12 +32,24 @@ class User(AbstractUser):
     workExperience = models.CharField(max_length=1, choices=WORKEXP, default='1')
     phone_number=PhoneNumberField(default='DEFAULT VALUE')
     profile_photo = models.ImageField(upload_to='profile_photos/',null=True,blank =True)
-    #emailsToSend = models.ForeignKey(User,on_delete=models.CASCADE);
-    #follows = models.ForeignKey(User,on_delete=models.CASCADE);
+    
+
     def __str__(self):
         return self.username
+
+    """emailsToSend = models.ForeignKey(self,on_delete=models.CASCADE);
+                follows = models.ForeignKey(self,on_delete=models.CASCADE);"""
+
     class Meta :
         verbose_name_plural="User"
+
+class Follow(models.Model):
+      following = models.ForeignKey(User, related_name="who_we_follow", on_delete=models.CASCADE)
+      follower = models.ForeignKey(User, related_name="who_follows_us", on_delete=models.CASCADE)
+
+      class Meta :
+        verbose_name_plural="Follow"
+
 
 class Company(models.Model): 
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -58,6 +71,11 @@ class Projects(models.Model):
     name = models.CharField(max_length=100)
     description = RichTextField(blank=True,null=True)
     likes = models.IntegerField()
+    creation = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return str(self.creation)
+
     class Meta :
         verbose_name_plural="Projects"   
 

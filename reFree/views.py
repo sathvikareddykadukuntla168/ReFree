@@ -1,13 +1,14 @@
 from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
+from django.core.mail import BadHeaderError, send_mail
 from rest_framework.decorators import action , api_view , renderer_classes,permission_classes
-from reFree.models import User,Company,Projects,Component,FinalDesign,SocialLinks
+from reFree.models import User,Follow,Company,Projects,Component,FinalDesign,SocialLinks
 from django.views.generic import ListView,DetailView
 from rest_framework import viewsets,permissions,status
 from rest_framework.renderers import JSONRenderer , TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from reFree.serializers import UserSerializer,CompanySerializer,SocialLinksSerializer,ProjectsSerializer,ComponentSerializer,FinalDesignSerializer
+from reFree.serializers import UserSerializer,FollowSerializer,CompanySerializer,SocialLinksSerializer,ProjectsSerializer,ComponentSerializer,FinalDesignSerializer
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth import authenticate, login,logout
 from django.views import View
@@ -72,6 +73,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'data': 'Invalid password'})
         except User.DoesNotExist : 
             return Response({'data':'Invalid password'})
+            
     @action(detail=False , methods=['get',])
     def currentuser(self , request ):
         if self.request.user.is_anonymous:
@@ -84,22 +86,54 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({'data': 'User has logged out'})
 
     @action(detail=False , methods=['get',])
-    def currentuser(self , request ):
-        if self.request.user.is_anonymous:
-            return Response({'userId':0})
-        return Response({'userId':self.request.user.id})
-
-    @action(detail=False , methods=['get',])
     def userlist(self , request ):
         if self.request.user.is_anonymous:
             return Response({'UserList':0})
         
         querysets = User.objects.all()
-        users = querysets.order_by('username')[:]
-        ordered = sorted(users, key=operator.attrgetter('first_name'))
-        serializer = UserSerializer(ordered,many =True)
+        users = querysets.order_by('workExperience', 'username')[:]
+    #    ordered = sorted(users, key=operator.attrgetter('first_name'))
+        serializer = UserSerializer(users,many =True)
         print(serializer.data)
         return Response(serializer.data)
+
+    @action(detail=False , methods=['get',])
+    def usersfiltered(self , request ):
+        userdata = request.data
+        if self.request.user.is_anonymous:
+            return Response({'UserList':0})
+        
+        querysets = User.objects.filter(userdata['workExperience'])
+        users = querysets.order_by('username')[:]
+    #    ordered = sorted(users, key=operator.attrgetter('first_name'))
+        serializer = UserSerializer(users,many =True)
+        print(serializer.data)
+        return Response(serializer.data)
+
+    @action(detail=False , methods=['get',])
+    def send_email(self, request):
+        """subject = request.POST.get('subject', '')
+                                message = request.POST.get('message', '')
+                                from_email = request.POST.get('from_email', '') """
+        userdata = request.data
+        subject = 'ReFree: New Post Uploaded'
+        message = 'Check out new post uploaded by the person you follow!'
+        from_email = userdata['email']
+        #to_email = 
+
+        try:
+            send_mail(subject, message, from_email, ['admin@example.com'])
+
+        except BadHeaderError:
+            return Response({'data':'Invalid header found.'})
+
+        return Response({'data':'Emails sent succesfully!.'})
+
+class FollowViewSet(viewsets.ModelViewSet):
+   
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class CompanyViewSet(viewsets.ModelViewSet):
    
@@ -144,17 +178,29 @@ class ComponentViewSet(viewsets.ModelViewSet):
     serializer_class = ComponentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False , methods=['get',])
+
+    def display_components(request):
+        userdata = request.data
+        if request.method == 'GET': 
+            # getting all the projects. 
+            component = Component.objects.filter(projects = userdata['projects']) 
+            serializeddata = FinalDesignSerializer(component , many=True)
+            return Response(serializeddata.data)
+
 class FinalDesignViewSet(viewsets.ModelViewSet):
     
     queryset = FinalDesign.objects.all()
     serializer_class = FinalDesignSerializer
     permission_classes = [permissions.IsAuthenticated]
-    def display_projects(request): 
-  
+
+    def display_projects(request):
+        userdata = request.data
         if request.method == 'GET': 
             # getting all the projects. 
-            projects = FinalDesign.objects.all()  
-            return Response(serializer.data) 
+            projects = FinalDesign.objects.filter(projects = userdata['projects']) 
+            serializeddata = FinalDesignSerializer(projects , many=True)
+            return Response(serializeddata.data) 
 
 '''def home(request):
     user=User.objects.all()[:]
