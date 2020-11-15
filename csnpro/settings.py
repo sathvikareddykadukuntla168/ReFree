@@ -89,10 +89,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sandydb',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'refree',
+        'PASSWORD': 'refree',
         'HOST':'localhost',
-        'PORT':''
+        'POR':''
     }
 }
 
