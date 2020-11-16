@@ -88,9 +88,9 @@ CSRF_COOKIE_NAME = 'frontend_csrftoken'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbrefree',
-        'USER': 'guest',
-        'PASSWORD': 'Guest123#',
+        'NAME': 'sandydb',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST':'localhost',
         'POR':''
     }
@@ -152,5 +152,5 @@ CORS_ORIGIN_WHITELIST = (
 #PAGINATION
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 100
 }

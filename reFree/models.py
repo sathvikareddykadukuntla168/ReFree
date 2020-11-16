@@ -7,13 +7,13 @@ from ckeditor.fields import RichTextField
 from phonenumber_field.modelfields import PhoneNumberField
 
 # make changes-->emailvalidation,imageField,relations
-
 WORKEXP=(
     ('0','<1 year'),
     ('1','1-2 years'),
     ('2','2-5 years'),
     ('3','>5years'),
 )
+
 def user_directory_path(instance, filename): 
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename> 
     return 'user_{0}/{1}'.format(instance.user.phone_number, filename)
@@ -33,7 +33,6 @@ class User(AbstractUser):
     phone_number=PhoneNumberField(default='DEFAULT VALUE')
     profile_photo = models.ImageField(upload_to='profile_photos/',null=True,blank =True)
     
-
     def __str__(self):
         return self.username
 
@@ -49,7 +48,6 @@ class Follow(models.Model):
 
       class Meta :
         verbose_name_plural="Follow"
-
 
 class Company(models.Model): 
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -71,6 +69,7 @@ class Projects(models.Model):
     name = models.CharField(max_length=100)
     description = RichTextField(blank=True,null=True)
     likes = models.IntegerField()
+    display = models.ImageField(upload_to ='projectdisplays/',null=True,blank =True) 
     creation = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
