@@ -88,16 +88,72 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False , methods=['get',])
     def userlist(self , request ):
         if self.request.user.is_anonymous:
-            return Response({'UserList':0})
+            queryset = User.objects.none()
+            serializer = UserSerializer(queryset , many=True)
+            return Response(serializer.data)
         
         querysets = User.objects.all()
         users = querysets.order_by('workExperience', 'username')[:]
-    #    ordered = sorted(users, key=operator.attrgetter('first_name'))
+        # ordered = sorted(users, key=operator.attrgetter('first_name'))
+        serializer = UserSerializer(users,many =True)
+        print(serializer.data)
+        return Response(serializer.data)
+    
+    # whom user is following
+    @action(detail=False , methods=['get',])
+    def followinglist(self , request ):
+        if self.request.user.is_anonymous:
+            queryset = User.objects.none()
+            serializer = UserSerializer(queryset , many=True)
+            return Response(serializer.data)
+    
+        user = User.objects.get(id=self.request.user.id )      
+        querysets = user.following.all()
+        # users = querysets.order_by('workExperience', 'username')[:]
+        # ordered = sorted(users, key=operator.attrgetter('first_name'))
+        serializer = FollowSerializer(querysets,many =True)
+        print(serializer.data)
+        return Response(serializer.data)
+
+    #who all are following this user
+    @action(detail=False , methods=['get',])
+    def followerslist(self , request ):
+        if self.request.user.is_anonymous:
+            queryset = User.objects.none()
+            serializer = UserSerializer(queryset , many=True)
+            return Response(serializer.data)
+    
+        user = User.objects.get(id=self.request.user.id )      
+        querysets = user.followers.all()
+        # users = querysets.order_by('workExperience', 'username')[:]
+        # ordered = sorted(users, key=operator.attrgetter('first_name'))
+        serializer = FollowSerializer(querysets,many =True)
+        print(serializer.data)
+        return Response(serializer.data)
+    
+    # filters
+    @action(detail=False , methods=['get',])
+    def userfilteredlist(self , request ):
+        usersdata = request.data
+        print(usersdata)
+        lists = []
+        if(usersdata['a']==1):
+            lists += User.objects.filter('workExperience'==0)
+        if(usersdata['b']==1):
+            lists += User.objects.filter('workExperience'==1)
+        if(usersdata['c']==1):
+            lists = User.objects.filter('workExperience'==2)
+        if(usersdata['d']==1):
+            lists += User.objects.filter('workExperience'==3)
+        if(usersdata['fff']==1):
+            lists += followerslist(self,request)
+
+        users = lists.order_by('workExperience', 'username')[:]
         serializer = UserSerializer(users,many =True)
         print(serializer.data)
         return Response(serializer.data)
 
-    @action(detail=False , methods=['get',])
+    '''@action(detail=False , methods=['get',])
     def usersfiltered(self , request ):
         userdata = request.data
         if self.request.user.is_anonymous:
@@ -108,21 +164,29 @@ class UserViewSet(viewsets.ModelViewSet):
     #    ordered = sorted(users, key=operator.attrgetter('first_name'))
         serializer = UserSerializer(users,many =True)
         print(serializer.data)
-        return Response(serializer.data)
+        return Response(serializer.data)'''
 
     @action(detail=False , methods=['get',])
     def send_email(self, request):
         """subject = request.POST.get('subject', '')
-                                message = request.POST.get('message', '')
-                                from_email = request.POST.get('from_email', '') """
-        userdata = request.data
+        from_email = request.POST.get('from_email', '') """
+       
         subject = 'ReFree: New Post Uploaded'
         message = 'Check out new post uploaded by the person you follow!'
-        from_email = userdata['email']
-        #to_email = 
+        from_email = 'refree6914@gmail.com'
+        user = User.objects.get(id=self.request.user.id )      
+        querysets = user.followers.all()
+
+        to_email = []
+        for obj in querysets :
+            print(querysets)
+            x = querysets[0]
+            uss = x.user_id
+            ''' objectt = User.objects.get(id=uss)'''
+            to_email.append(uss.email)
 
         try:
-            send_mail(subject, message, from_email, ['admin@example.com'])
+            send_mail(subject, message, from_email,to_email)
 
         except BadHeaderError:
             return Response({'data':'Invalid header found.'})
@@ -154,10 +218,12 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False , methods=['get',])
-
+    # trendinglist
     def projectlist(self , request ):
         if self.request.user.is_anonymous:
-            return Response({'ProjectList':0})
+            queryset = Projects.objects.none()
+            serializer =ProjectsSerializer(queryset , many=True)
+            return Response(serializer.data)
         
         querysets = Projects.objects.filter(user = self.request.user.id)
         projs = querysets.order_by('likes')[:8]
@@ -181,7 +247,6 @@ class ComponentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False , methods=['get',])
-
     def display_components(request):
         userdata = request.data
         if request.method == 'GET': 
