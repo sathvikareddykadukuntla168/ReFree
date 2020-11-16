@@ -166,6 +166,8 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         print(serializer.data)
         return Response(serializer.data)
 
+
+    @action(detail=False , methods=['get',])
     def userprojects(self , request):
         querysets = Projects.objects.filter(user=self.request.user.id)
         serializeddata = ProjectsSerializer(querysets , many=True)
