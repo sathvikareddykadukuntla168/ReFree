@@ -205,6 +205,13 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False , methods=['get',])
+    def usercompanies(self , request):
+        querysets = Company.objects.filter(user=self.request.user.id)
+        serializeddata = CompanySerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
+
 class SocialLinksViewSet(viewsets.ModelViewSet):
     
     queryset = SocialLinks.objects.all()#.order_by('-date_joined')

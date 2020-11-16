@@ -88,9 +88,9 @@ CSRF_COOKIE_NAME = 'frontend_csrftoken'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'databaserefree',
-        'USER': 'root',
-        'PASSWORD': '',
+        'NAME': 'dbrefree',
+        'USER': 'guest',
+        'PASSWORD': 'Guest123#',
         'HOST':'localhost',
         'POR':''
     }
