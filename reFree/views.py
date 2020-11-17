@@ -207,7 +207,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     @action(detail=False , methods=['get',])
     def usercompanies(self , request):
-        querysets = Company.objects.filter(user=self.request.user.id)
+        userId = self.request.query_params.get('userId')
+        querysets = Company.objects.filter(user=userId)
         serializeddata = CompanySerializer(querysets , many=True)
         return Response(serializeddata.data)
 
@@ -220,7 +221,8 @@ class SocialLinksViewSet(viewsets.ModelViewSet):
 
     @action(detail=False , methods=['get',])
     def userlinks(self , request):
-        querysets = SocialLinks.objects.filter(user=self.request.user.id)
+        userId = self.request.query_params.get('userId')
+        querysets = SocialLinks.objects.filter(user=userId)
         serializeddata = SocialLinksSerializer(querysets , many=True)
         return Response(serializeddata.data)
 
