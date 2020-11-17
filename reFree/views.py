@@ -218,6 +218,13 @@ class SocialLinksViewSet(viewsets.ModelViewSet):
     serializer_class = SocialLinksSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False , methods=['get',])
+    def userlinks(self , request):
+        querysets = SocialLinks.objects.filter(user=self.request.user.id)
+        serializeddata = SocialLinksSerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
+
 class ProjectsViewSet(viewsets.ModelViewSet):
     
     queryset = Projects.objects.all()
