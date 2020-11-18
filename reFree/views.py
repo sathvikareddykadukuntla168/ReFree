@@ -199,6 +199,22 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @action(detail=False , methods=['get',])
+    def userfollows(self , request):
+        userId = self.request.query_params.get('userId')
+        querysets = Follow.objects.filter(user_id=userId)
+        serializeddata = FollowSerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
+    @action(detail=False , methods=['get',])
+    def userfollowing(self , request):
+        userId = self.request.query_params.get('userId')
+        querysets = Follow.objects.filter(following_user_id=userId)
+        serializeddata = FollowSerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
+
+
 class CompanyViewSet(viewsets.ModelViewSet):
    
     queryset = Company.objects.all()
