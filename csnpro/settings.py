@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'likes',
     'rest_framework',
     'phonenumber_field',
     'widget_tweaks',
@@ -88,13 +89,21 @@ CSRF_COOKIE_NAME = 'frontend_csrftoken'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbrefree',
-        'USER': 'guest',
-        'PASSWORD': 'Guest123#',
+        'NAME': 'databaserefree',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST':'localhost',
         'POR':''
     }
 }
+
+LIKES_MODELS = {
+    "app.Model": {
+        'serializer': 'app.api.serializer.YourModelSerializer'
+    },
+}
+
+LIKES_REST_PAGINATION_CLASS = 'core.api.pagination.MyResponsePagination'
 
 
 # Password validation
@@ -115,15 +124,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST_USER = 'refree6914@gmail.com'
-EMAIL_HOST_PASSWORD ='h%^678%&@HO(@)' 
+EMAIL_HOST_PASSWORD ='%^$@^!^*@&!(@*(*@(&^@^' 
 EMAIL_USE_TLS =True
 EMAIL_USE_SSL =False
 AUTH_USER_MODEL = 'reFree.User'
 # h%^678%&@HO(@)
+#%^$@^!^*@&!(@*(*@(&^@^
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

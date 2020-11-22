@@ -12,6 +12,7 @@ from reFree.serializers import LikeSerializer, UserSerializer,FollowSerializer,C
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth import authenticate, login,logout
 from django.views import View
+from csnpro.settings import EMAIL_HOST_USER
 from rest_framework.permissions import AllowAny
 import operator
 #from django_project import helpers
@@ -173,7 +174,7 @@ class UserViewSet(viewsets.ModelViewSet):
        
         subject = 'ReFree: New Post Uploaded'
         message = 'Check out new post uploaded by the person you follow!'
-        from_email = 'refree6914@gmail.com'
+        from_email = EMAIL_HOST_USER
         user = User.objects.get(id=self.request.user.id )      
         querysets = user.followers.all()
 
