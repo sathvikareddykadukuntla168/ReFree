@@ -1,4 +1,4 @@
-from reFree.models import User,Follow,Company,Projects,Component,FinalDesign,SocialLinks
+from reFree.models import User,Follow,Company,Projects,Like,Component,FinalDesign,SocialLinks
 from rest_framework import serializers
 
 
@@ -26,6 +26,11 @@ class SocialLinksSerializer(serializers.ModelSerializer):
 class ProjectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
+        fields = '__all__'
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
         fields = '__all__'
 
 class ComponentSerializer(serializers.ModelSerializer):

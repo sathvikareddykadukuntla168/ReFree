@@ -39,6 +39,7 @@ router.register(r'socialLinks', views.SocialLinksViewSet)
 router.register(r'projects', views.ProjectsViewSet)
 router.register(r'component', views.ComponentViewSet)
 router.register(r'finalDesign', views.FinalDesignViewSet)
+router.register(r'like' , views.LikeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

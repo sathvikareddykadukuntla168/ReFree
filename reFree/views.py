@@ -2,13 +2,13 @@ from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.core.mail import BadHeaderError, send_mail
 from rest_framework.decorators import action , api_view , renderer_classes,permission_classes
-from reFree.models import User,Follow,Company,Projects,Component,FinalDesign,SocialLinks
+from reFree.models import User,Follow,Company,Like,Projects,Component,FinalDesign,SocialLinks
 from django.views.generic import ListView,DetailView
 from rest_framework import viewsets,permissions,status
 from rest_framework.renderers import JSONRenderer , TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from reFree.serializers import UserSerializer,FollowSerializer,CompanySerializer,SocialLinksSerializer,ProjectsSerializer,ComponentSerializer,FinalDesignSerializer
+from reFree.serializers import LikeSerializer, UserSerializer,FollowSerializer,CompanySerializer,SocialLinksSerializer,ProjectsSerializer,ComponentSerializer,FinalDesignSerializer
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth import authenticate, login,logout
 from django.views import View
@@ -258,7 +258,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         
         querysets = Projects.objects.filter(user = self.request.user.id)
-        projs = querysets.order_by('likes')[:8]
+        projs = querysets.order_by('name')[:8]
         ordered = sorted(projs, key=operator.attrgetter('name'))
         serializer = ProjectsSerializer(ordered,many =True)
         print(serializer.data)
@@ -269,6 +269,26 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     def userprojects(self , request):
         querysets = Projects.objects.filter(user=self.request.user.id)
         serializeddata = ProjectsSerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
+    @action(detail=False , methods=['get',])
+    def projectsuser(self , request):
+        userId = self.request.query_params.get('userId')
+        querysets = Projects.objects.filter(user=userId)
+        serializeddata = ProjectsSerializer(querysets , many=True)
+        return Response(serializeddata.data)
+
+class LikeViewSet(viewsets.ModelViewSet):
+
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False , methods=['get',])
+    def userlikes(self , request):
+        userId = self.request.query_params.get('userId')
+        querysets = Like.objects.filter(user_id=userId)
+        serializeddata = LikeSerializer(querysets , many=True)
         return Response(serializeddata.data)
 
 

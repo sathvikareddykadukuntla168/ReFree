@@ -69,7 +69,6 @@ class Projects(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = RichTextField(blank=True,null=True)
-    likes = models.IntegerField()
     display = models.ImageField(upload_to ='projectdisplays/',null=True,blank =True) 
     creation = models.DateTimeField(auto_now=True)
 
@@ -78,6 +77,13 @@ class Projects(models.Model):
 
     class Meta :
         verbose_name_plural="Projects"   
+
+class Like(models.Model):
+    user_id = models.ForeignKey("User", related_name="person",on_delete=models.CASCADE)
+    project_id = models.ForeignKey("Projects", related_name="project",on_delete=models.CASCADE)
+
+    class Meta :
+        verbose_name_plural="Like"
 
 class Component(models.Model):
     project =models.ForeignKey(Projects,on_delete=models.CASCADE)
