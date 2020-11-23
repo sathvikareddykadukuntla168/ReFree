@@ -12,8 +12,10 @@ from reFree.serializers import LikeSerializer, UserSerializer,FollowSerializer,C
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth import authenticate, login,logout
 from django.views import View
+from rest_framework.permissions import AllowAny 
+from rest_framework import permissions
 from csnpro.settings import EMAIL_HOST_USER
-from rest_framework.permissions import AllowAny
+
 import operator
 #from django_project import helpers
 
@@ -198,7 +200,7 @@ class FollowViewSet(viewsets.ModelViewSet):
    
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False , methods=['get',])
     def userfollows(self , request):
@@ -226,7 +228,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
    
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False , methods=['get',])
     def usercompanies(self , request):
@@ -240,7 +242,7 @@ class SocialLinksViewSet(viewsets.ModelViewSet):
     
     queryset = SocialLinks.objects.all()#.order_by('-date_joined')
     serializer_class = SocialLinksSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False , methods=['get',])
     def userlinks(self , request):
@@ -254,7 +256,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     
     queryset = Projects.objects.all()
     serializer_class = ProjectsSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False , methods=['get',])
     # trendinglist
@@ -289,7 +291,7 @@ class LikeViewSet(viewsets.ModelViewSet):
 
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False , methods=['get',])
     def userlikes(self , request):
@@ -303,7 +305,7 @@ class ComponentViewSet(viewsets.ModelViewSet):
    
     queryset = Component.objects.all()#.order_by('-date_joined')
     serializer_class = ComponentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False , methods=['get',])
     def display_components(request):
@@ -318,7 +320,7 @@ class FinalDesignViewSet(viewsets.ModelViewSet):
     
     queryset = FinalDesign.objects.all()
     serializer_class = FinalDesignSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def display_projects(request):
         userdata = request.data
