@@ -47,7 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
             last_name = userdata['lastname'], 
             email = userdata['email'],
             password = userdata['password'],
-            phone_number = userdata['phone_number']
+            phone_number = userdata['phone_number'],
             )
         newuser.save()
         login(request , newuser)
@@ -82,8 +82,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({'userId':self.request.user.id })
 
     @action(detail=False,methods=['get',])
-    def logoutview(request):
-        logout(request)
+    def logoutview(self,request):
+        logout(self.request)
         return Response({'data': 'User has logged out'})
 
     @action(detail=False , methods=['get',])
@@ -213,7 +213,13 @@ class FollowViewSet(viewsets.ModelViewSet):
         querysets = Follow.objects.filter(following_user_id=userId)
         serializeddata = FollowSerializer(querysets , many=True)
         return Response(serializeddata.data)
-
+    
+    @action(detail=False , methods=['get',])
+    def userfollow(self , request):
+        Id = self.request.query_params.get('Id')
+        querysets = Follow.objects.filter(following_user_id=Id)
+        serializeddata = FollowSerializer(querysets , many=True)
+        return Response(querysets.count())
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
