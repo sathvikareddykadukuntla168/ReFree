@@ -43,7 +43,6 @@ router.register(r'like' , views.LikeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/v1/', include('likes.api.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     url(r'^home/$', HomeView.as_view(), name='home'),

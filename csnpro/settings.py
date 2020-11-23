@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'likes',
     'rest_framework',
     'phonenumber_field',
     'widget_tweaks',
@@ -96,14 +95,6 @@ DATABASES = {
         'POR':''
     }
 }
-
-LIKES_MODELS = {
-    "app.Model": {
-        'serializer': 'app.api.serializer.YourModelSerializer'
-    },
-}
-
-LIKES_REST_PAGINATION_CLASS = 'core.api.pagination.MyResponsePagination'
 
 
 # Password validation
