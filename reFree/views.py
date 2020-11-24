@@ -50,6 +50,7 @@ class UserViewSet(viewsets.ModelViewSet):
             email = userdata['email'],
             password = userdata['password'],
             phone_number = userdata['phone_number'],
+            profile_photo = userdata['profile_photo'],
             )
         newuser.save()
         login(request , newuser)

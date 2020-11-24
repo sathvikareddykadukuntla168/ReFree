@@ -60,7 +60,7 @@ class Company(models.Model):
 class SocialLinks(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
-    link = RichTextField(blank=True,null=True) 
+    link = models.CharField(max_length=30) 
     class Meta :
         verbose_name_plural="SocialLinks"
 
