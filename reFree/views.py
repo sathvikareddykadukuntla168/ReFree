@@ -219,7 +219,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     @action(detail=False , methods=['get',])
     def userfollow(self , request):
         Id = self.request.query_params.get('Id')
-        querysets = Follow.objects.filter(following_user_id=Id)
+        querysets = Follow.objects.filter(user_id=Id)
         serializeddata = FollowSerializer(querysets , many=True)
         return Response(querysets.count())
 
@@ -299,6 +299,12 @@ class LikeViewSet(viewsets.ModelViewSet):
         querysets = Like.objects.filter(user_id=userId)
         serializeddata = LikeSerializer(querysets , many=True)
         return Response(serializeddata.data)
+    @action(detail=False , methods=['get',])
+    def projectlikes(self , request):
+        projectId = self.request.query_params.get('projectId')
+        querysets = Like.objects.filter(project_id=projectId)
+        serializeddata = LikeSerializer(querysets , many=True)
+        return Response(querysets.count())
 
 
 class ComponentViewSet(viewsets.ModelViewSet):
